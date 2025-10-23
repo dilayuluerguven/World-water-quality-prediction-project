@@ -106,3 +106,23 @@ plt.figure()
 tree.plot_tree(df_clf,feature_names=df.columns.tolist()[:-1],class_names=["0","1"],filled=True,precision=5)
 plt.show()
 #hyperparameter tuning:  random forest
+model_params={
+    "Random Forest":{
+        "model":RandomForestClassifier(),
+        "params":{
+            "n_estimators":[10,50,100],
+            "max_features":["sqrt","log2"],
+            "max_depth":list(range(1,21,3)),
+        }
+    }
+}
+
+cv= RepeatedStratifiedKFold(n_splits=5,n_repeats=2)
+scores=[]
+for model_name,params in model_params.items():
+    rs= RandomizedSearchCV(params["model"],params["params"],cv=cv,n_iter=10)
+    rs.fit(X_train,Y_train)
+    scores.append([model_name,dict(rs.best_params_),rs.best_score_])
+
+print("Hyperparameter Tuning Results:",scores)
+   
