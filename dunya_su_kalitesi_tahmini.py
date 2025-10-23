@@ -59,7 +59,9 @@ msno.matrix(df)
 plt.show()
 
 
-#preprocessing:missing value problem,train-test split,normalization,encoding
+#preprocessing:missing value problem,train-test split,normalization
+print(df.isnull().sum())
+
 
 #modelleme: decision tree, random forest
 
