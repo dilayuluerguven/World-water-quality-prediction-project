@@ -61,10 +61,44 @@ plt.show()
 
 #preprocessing:missing value problem,train-test split,normalization
 print(df.isnull().sum())
+df["ph"].fillna(value=df["ph"].mean(),inplace=True)
+df["Sulfate"].fillna(value=df["Sulfate"].mean(),inplace=True)
+df["Trihalomethanes"].fillna(value=df["Trihalomethanes"].mean(),inplace=True)
+print(df.isnull().sum())
 
+#train  test split
+X=df.drop("Potability",axis=1).values
+Y=df["Potability"].values
+X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size=0.3,random_state=42,)
+
+#min-max normalization
+x_train_max = np.max(X_train)
+x_train_min = np.min(X_train)
+X_train = (X_train - x_train_min) / (x_train_max - x_train_min)
+X_test = (X_test - x_train_min) / (x_train_max - x_train_min)
 
 #modelleme: decision tree, random forest
+models=[{"DIC":DecisionTreeClassifier(max_depth=3)},
+        {"RFC":RandomForestClassifier()}]
+finalResults=[]#scoreları tutacak
+cmList=[]#matriksleri tutacak
+for model_dict in models:
+    for name, model in model_dict.items():
+        model.fit(X_train, Y_train)
+        model_result = model.predict(X_test)
+        score = precision_score(Y_test, model_result)
 
+        finalResults.append({name: score})
+        cm = confusion_matrix(Y_test, model_result)
+        cmList.append({name: cm})
+print("Final Results:",finalResults)
+
+for cm_dict in cmList:
+    for name, cm in cm_dict.items():
+        plt.figure()
+        sns.heatmap(cm, annot=True, linewidths=0.8, fmt=".0f")
+        plt.title(name)
+        plt.show()
 #evaluation: decision tree visualization
 
 #hyperparameter tuning:  random forest
