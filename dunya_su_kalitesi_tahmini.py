@@ -101,4 +101,8 @@ for cm_dict in cmList:
         plt.show()
 #evaluation: decision tree visualization
 
+df_clf = models[0]["DIC"]
+plt.figure()
+tree.plot_tree(df_clf,feature_names=df.columns.tolist()[:-1],class_names=["0","1"],filled=True,precision=5)
+plt.show()
 #hyperparameter tuning:  random forest
